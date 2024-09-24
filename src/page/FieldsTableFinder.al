@@ -149,8 +149,6 @@ page 60008 "Fields Table Finder"
     var
     begin
         Rec.Reset();
-        AllObjWithCaption.Reset();
-        // TextOutcome := '';
         FieldsFoundForTableSearched := 0;
 
         ClearList(ListOfTables1);
@@ -389,23 +387,16 @@ page 60008 "Fields Table Finder"
     end;
 
     var
-        AllObjWithCaption: Record AllObjWithCaption;
         FieldRecord: Record Field;
         TextFinderFiltered: Text;
         FieldsFoundForTableSearched: Integer;
-        CaptionOrFieldName: Boolean;
-        FieldFinderInput1: Text;
-        FieldFinderInput2: Text;
-        FieldFinderInput3: Text;
-        ListOfTables1: List of [Integer];
-        ListOfTables2: List of [Integer];
-        ListOfTables3: List of [Integer];
+        FieldFinderInput1, FieldFinderInput2, FieldFinderInput3 : Text;
+        ListOfTables1, ListOfTables2, ListOfTables3 : List of [Integer];
+        Size1, Size2, Size3 : Integer;
         ListOfTablesAlreadyDone: List of [Integer];
         AddCurrentTable: Integer;
         TableFoundCount: Integer;
-        CanUseAction: Boolean;
-        Size1: Integer;
-        Size2: Integer;
-        Size3: Integer;
+        CanUseAction, CaptionOrFieldName : Boolean;
+
         FindLowestList: Integer;
 }

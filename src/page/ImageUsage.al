@@ -3,7 +3,6 @@ page 60004 "Image Usage"
     Caption = 'Image Usage';
     UsageCategory = ReportsAndAnalysis;
     PageType = Card;
-
     layout
     {
         area(Content)
@@ -17,7 +16,6 @@ page 60004 "Image Usage"
                 }
             }
         }
-
     }
     actions
     {
@@ -34,7 +32,6 @@ page 60004 "Image Usage"
                 PromotedIsBig = true;
                 Enabled = ImageSelectOptions <> ImageSelectOptions::None;
                 trigger OnAction()
-
                 var
                     Image: Codeunit Image;
                     InStream: InStream;
@@ -43,9 +40,6 @@ page 60004 "Image Usage"
                 begin
                     if UploadIntoStream('Upload Image', '', '', Filename, InStream) then begin
                         Image.FromStream(InStream);
-
-                        //Image Data            
-                        // ImageProperties(Image, InStream, Filename);
 
                         case ImageSelectOptions of
                             ImageSelectOptions::Properties:
@@ -68,19 +62,7 @@ page 60004 "Image Usage"
     }
 
     local procedure ImageProperties(var Image: Codeunit Image; var InStream: InStream; var Filename: Text; OutStream: OutStream)
-    var
-        FirstName: Text;
-        LastName: Text;
-        Age: Integer;
     begin
-        Message('Type %1\ Width %2\ Height %3\RotateFlipType %4', Image.GetFormat(), Image.GetHeight(), Image.GetWidth(), Image.GetRotateFlipType());
-
-        FirstName := 'Shivam';
-        LastName := 'Mistry';
-        Age := 25;
-
-        Message('First Name %1\ Last Name %2\ Age %3\ ', FirstName, LastName, Age);
-
         TempBlob.CreateOutStream(OutStream);
         image.Save(OutStream);
         TempBlob.CreateInStream(InStream);
@@ -112,14 +94,12 @@ page 60004 "Image Usage"
 
     local procedure ImageRotate(var Image: Codeunit Image; var InStream: InStream; var Filename: Text; OutStream: OutStream)
     begin
-
         Image.RotateFlip("Rotate Flip Type"::Rotate90FlipX);
 
         TempBlob.CreateOutStream(OutStream);
         image.Save(OutStream);
         TempBlob.CreateInStream(InStream);
         Filename := Filename.Replace('.', '2.');
-
         DownloadFromStream(InStream, '', '', '', Filename);
     end;
 

@@ -4,7 +4,6 @@ page 60005 "Field Selector"
     PageType = Worksheet;
     UsageCategory = Lists;
     SourceTable = "Own Fields";
-
     layout
     {
         area(Content)
@@ -87,6 +86,8 @@ page 60005 "Field Selector"
                         myInt: Integer;
                         OwnFieldsCheck: Record "Own Fields";
                     begin
+                        CanUseAction := CheckIfAnyValuesAreNotZero();
+
                         if Rec."Number Order" = 0 then begin
                             Rec."Use Field" := false;
                             exit;
@@ -115,25 +116,13 @@ page 60005 "Field Selector"
                 PromotedCategory = Process;
                 PromotedOnly = true;
                 PromotedIsBig = true;
+                Enabled = CanUseAction;
                 trigger OnAction()
                 begin
-                    AnnouceOrderOfFields()
+                    AnnouceOrderOfFields();
+                    CurrPage.Update(false);
                 end;
             }
-            // action(ClearValues)
-            // {
-            //     ApplicationArea = All;
-            //     Caption = 'Clear Values';
-            //     Promoted = true;
-            //     Image = ClearLog;
-            //     PromotedCategory = Process;
-            //     PromotedOnly = true;
-            //     PromotedIsBig = true;
-            //     trigger OnAction()
-            //     begin
-            //         ClearAllValues();
-            //     end;
-            // }
         }
     }
     trigger OnOpenPage()
@@ -144,7 +133,6 @@ page 60005 "Field Selector"
     end;
 
     local procedure FindTableInBusinessCentral()
-    var
     begin
         Field.Reset();
         AllObjWithCaption.Reset();
@@ -154,8 +142,10 @@ page 60005 "Field Selector"
         CheckIfTableIsBCOrExtension();
         InsertFields(Rec);
         StyleExpressionText := StyleTextOutput();
+        Rec.Reset();
         Rec.SetCurrentKey("No.");
         Rec.Ascending(true);
+        CurrPage.Update(false);
 
     end;
 
@@ -221,10 +211,8 @@ page 60005 "Field Selector"
 
     local procedure InsertFields(var Record: Record "Own Fields" temporary)
     begin
+        Record.DeleteAll();
         Record.Reset();
-        Record.SetFilter(FieldName, '<>%1', '');
-        if Record.FindSet() then
-            Record.DeleteAll();
         if Field.FindSet() then
             repeat
                 Record.Validate(TableNo, Field.TableNo);
@@ -241,45 +229,22 @@ page 60005 "Field Selector"
     end;
 
     local procedure AnnouceOrderOfFields()
-    var
-        OwnFields2: Record "Own Fields";
     begin
         Rec.Reset();
         Rec.SetCurrentKey("Number Order");
-        Rec.Ascending(true);
-        Rec.SetRange("Use Field", true);
-        if Rec.FindSet() then
-            repeat
-                Message('Field: %1 Order Num: %2', Rec.FieldName, Rec."Number Order");
-            until Rec.Next() = 0;
-        Rec.SetCurrentKey("No.");
         Rec.Ascending(true);
     end;
 
     local procedure CheckIfAnyValuesAreNotZero(): Boolean
     var
-        myInt: Integer;
     begin
         Rec.Reset();
-        Rec.SetFilter("Number Order", '>%1', 0);
+        Rec.SetFilter("Number Order", '<>%1', 0);
         if Rec.IsEmpty then
             exit(false)
         else
             exit(true)
     end;
-
-    // local procedure ClearAllValues()
-    // var
-    //     myInt: Integer;
-    // begin
-    //     Rec.Reset();
-    //     Rec.SetRange("Use Field", true);
-    //     if Rec.FindSet() then begin
-    //         Rec.Validate("Use Field", false);
-    //         Rec.Validate("Number Order", 0);
-    //         Rec.Modify(false);
-    //     end;
-    // end;
 
     var
         AllObjWithCaption: Record AllObjWithCaption;
@@ -290,9 +255,6 @@ page 60005 "Field Selector"
         TableLookUpName: Text;
         TextOutcome: Text;
         StyleExpressionText: Text;
-        AppName: Text;
-        FieldType: Text;
-        ExtendedFieldsinBCLbl: Label '50000..60000';
         AnyFieldsinBCLbl: Label '1..99999';
 
         FoundFieldsLbl: Label 'Table found with fields';
@@ -301,7 +263,5 @@ page 60005 "Field Selector"
         NoExtraFieldsLbl: Label 'No extra fields';
         NoSearchUsedLbl: Label 'No Search Used';
         NonStandardTableLbl: Label 'Non Standard Table Found';
-        FieldBoolean: Boolean;
-        FieldNumberOrder: Integer;
-        FieldSelectorCodeunit: Codeunit "Field Selector Codeunit";
+        CanUseAction: Boolean;
 }

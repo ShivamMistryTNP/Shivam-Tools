@@ -5,7 +5,6 @@ page 60001 "Table Fields"
     PageType = Worksheet;
     SourceTable = "Field";
     UsageCategory = Lists;
-
     layout
     {
         area(Content)
@@ -160,18 +159,13 @@ page 60001 "Table Fields"
 
     var
         AllObjWithCaption: Record AllObjWithCaption;
-        Field: Record Field;
-
         TableID: Integer;
         FieldsFoundForTableSearched: Integer;
         TableLookUpName: Text;
         TextOutcome: Text;
         StyleExpressionText: Text;
-        AppName: Text;
-        FieldType: Text;
         ExtendedFieldsinBCLbl: Label '50000..60000';
         FoundFieldsLbl: Label 'Table found with fields';
-
         TableNotFoundLbl: Label 'Table not found';
         NoExtraFieldsLbl: Label 'No extra fields';
         NoSearchUsedLbl: Label 'No Search Used';
