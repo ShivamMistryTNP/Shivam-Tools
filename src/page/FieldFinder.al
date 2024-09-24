@@ -20,8 +20,6 @@ page 60007 "Field Finder"
                     Editable = true;
                     ApplicationArea = All;
                     trigger OnValidate()
-                    var
-                        myInt: Integer;
                     begin
                         FindFieldsInBusinessCentral()
                     end;
