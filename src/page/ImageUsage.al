@@ -11,12 +11,10 @@ page 60004 "Image Usage"
             group(General)
             {
                 Caption = 'General';
-
                 field(ImageSelectOptions; ImageSelectOptions)
                 {
                     Caption = 'Image Select Option';
                 }
-
             }
         }
 
