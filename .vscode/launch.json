@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Shiv23 docker",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
+            "server": "https://dev-svr.mistryhome.co.uk",
+            "serverInstance": "Shiv23dev",
+            "port": 443,
+            "authentication": "UserPassword",
+            "startupObjectId": 60000,
+            "startupObjectType": "Page",
+            "breakOnError": "All",
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "tenant": "default",
+            "usePublicURLFromServer": true,
+            "schemaUpdateMode": "ForceSync"
+        }
+    ]
+}
