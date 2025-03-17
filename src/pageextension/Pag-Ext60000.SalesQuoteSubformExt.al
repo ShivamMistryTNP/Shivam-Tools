@@ -8,7 +8,7 @@ pageextension 60000 "Sales Quote Subform Ext" extends "Sales Quote Subform"
             {
                 Editable = false;
             }
-            field("Report Line No."; Rec."Printing Order Line No.")
+            field("Report Line No."; Rec."Sequence No. PCXP")
             {
 
             }
