@@ -2,7 +2,7 @@ tableextension 60000 "Sales Line Ext" extends "Sales Line"
 {
     fields
     {
-        field(50000; "Sequence No. PCXP"; Integer)
+        field(1871; "Sequence No. PCXP"; Integer)
         {
             Caption = 'Report Line No';
             DataClassification = CustomerContent;

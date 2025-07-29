@@ -21,7 +21,7 @@ page 60007 "Field Finder"
                     ApplicationArea = All;
                     trigger OnValidate()
                     begin
-                        FindFieldsInBusinessCentral()
+                        FindFieldsInBusinessCentral();
                     end;
                 }
                 field(FieldsFoundForTableSearched; FieldsFoundForTableSearched)
@@ -38,10 +38,19 @@ page 60007 "Field Finder"
                     Editable = true;
                     ApplicationArea = All;
                     trigger OnValidate()
-                    var
-                        myInt: Integer;
                     begin
                         FindFieldsInBusinessCentral()
+                    end;
+                }
+                field(SpecifiedSearch; FieldsContain)
+                {
+                    Caption = 'Fields Contain';
+                    ToolTip = 'Enable searching where fields contain before or after';
+                    Editable = true;
+                    ApplicationArea = All;
+                    trigger OnValidate()
+                    begin
+                        CurrPage.Update(false);
                     end;
                 }
             }
@@ -87,6 +96,27 @@ page 60007 "Field Finder"
             }
         }
     }
+    actions
+    {
+        area(Creation)
+        {
+            action(FindLowestList)
+            {
+                ApplicationArea = All;
+                Caption = 'Search';
+                Promoted = true;
+                Image = SuggestTables;
+                PromotedCategory = Process;
+                PromotedOnly = true;
+                PromotedIsBig = true;
+                Enabled = FieldFinderInput <> '';
+                trigger OnAction()
+                begin
+                    FindFieldsInBusinessCentral();
+                end;
+            }
+        }
+    }
     trigger OnOpenPage()
     begin
         FieldsFoundForTableSearched := 0;
@@ -108,6 +138,9 @@ page 60007 "Field Finder"
         if Rec.FindSet() then
             FieldsFoundForTableSearched := Rec.Count else
             FieldsFoundForTableSearched := 0;
+
+        if (FieldsFoundForTableSearched = 0) AND (FieldFinderInput <> '') then
+            Error(InvalidSearchLbl, FieldFinderInput);
     end;
 
     local procedure SearchForFields()
@@ -116,7 +149,9 @@ page 60007 "Field Finder"
     begin
         Rec.Reset();
         if FieldFinderInput <> '' then begin
-            TextFinderFiltered := '*' + FieldFinderInput + '*';
+            if FieldsContain then
+                TextFinderFiltered := '*' + FieldFinderInput + '*' else
+                TextFinderFiltered := FieldFinderInput;
             if CaptionOrFieldName = true then
                 Rec.SetFilter(FieldName, TextFinderFiltered)
             else
@@ -130,4 +165,7 @@ page 60007 "Field Finder"
         FieldFinderInput: Text;
         FieldsFoundForTableSearched: Integer;
         CaptionOrFieldName: Boolean;
+        FieldsContain: Boolean;
+        InvalidSearchLbl: Label 'Invalid Search, field name %1 does not exist, to fix this, try setting "Fields Contain" to true.';
+
 }

@@ -24,7 +24,7 @@ page 60008 "Fields Table Finder"
                     begin
                         Size1 := GetSize(FieldFinderInput1, ListOfTables1);
                         if (Size1 = 0) AND (FieldFinderInput1 <> '') then
-                            Error('Invalid Search, field name %1 does not exist, to fix this, try setting "Fields Contain" to true.', FieldFinderInput1);
+                            Error(InvalidSearchLbl, FieldFinderInput1);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -40,7 +40,7 @@ page 60008 "Fields Table Finder"
                     begin
                         Size2 := GetSize(FieldFinderInput2, ListOfTables2);
                         if (Size2 = 0) AND (FieldFinderInput2 <> '') then
-                            Error('Invalid Search, field name %1 does not exist, to fix this, try setting "Fields Contain" to true.', FieldFinderInput2);
+                            Error(InvalidSearchLbl, FieldFinderInput2);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -56,7 +56,7 @@ page 60008 "Fields Table Finder"
                     begin
                         Size3 := GetSize(FieldFinderInput3, ListOfTables3);
                         if (Size3 = 0) AND (FieldFinderInput3 <> '') then
-                            Error('Invalid Search, field name %1 does not exist, to fix this, try setting "Fields Contain" to true.', FieldFinderInput3);
+                            Error(InvalidSearchLbl, FieldFinderInput3);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -444,6 +444,7 @@ page 60008 "Fields Table Finder"
 
     var
         FieldRecord: Record Field;
+        InvalidSearchLbl: Label 'Invalid Search, field name %1 does not exist, to fix this, try setting "Fields Contain" to true.';
         TextFinderFiltered: Text;
         FieldsFoundForTableSearched: Integer;
         FieldFinderInput1, FieldFinderInput2, FieldFinderInput3 : Text;

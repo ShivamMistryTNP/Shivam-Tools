@@ -55,6 +55,8 @@ page 60005 "Field Selector"
                     Caption = 'No.';
                     ToolTip = 'Specifies the number of the field.';
                     Editable = false;
+                    StyleExpr = IsBold;
+
                 }
                 field(FieldName; Rec.FieldName)
                 {
@@ -62,6 +64,8 @@ page 60005 "Field Selector"
                     Caption = 'Field Name';
                     ToolTip = 'Specifies the name of the field.';
                     Editable = false;
+                    StyleExpr = IsBold;
+
                 }
                 field("Field Caption"; Rec."Field Caption")
                 {
@@ -69,22 +73,25 @@ page 60005 "Field Selector"
                     Caption = 'Field Caption';
                     ToolTip = 'Specifies the caption of the field, that is, the name that will be shown in the user interface.';
                     Editable = false;
+                    StyleExpr = IsBold;
+
                 }
                 field(Field; Rec.Type)
                 {
                     ApplicationArea = All;
                     Caption = 'Field Type';
                     Editable = false;
+                    StyleExpr = IsBold;
+
                 }
                 field(FieldNumberOrder; Rec."Number Order")
                 {
                     ApplicationArea = All;
                     Caption = 'Order';
                     Editable = TableID <> 0;
+                    StyleExpr = IsBold;
+
                     trigger OnValidate()
-                    var
-                        myInt: Integer;
-                        OwnFieldsCheck: Record "Own Fields";
                     begin
                         CanUseAction := CheckIfAnyValuesAreNotZero();
 
@@ -213,19 +220,20 @@ page 60005 "Field Selector"
     begin
         Record.DeleteAll();
         Record.Reset();
-        if Field.FindSet() then
-            repeat
-                Record.Validate(TableNo, Field.TableNo);
-                Record.Validate("No.", Field."No.");
-                Record.Validate(TableName, Field.TableName);
-                Record.Validate(FieldName, Field.FieldName);
-                Record.Validate("Type Name", Field."Type Name");
-                Record.Validate(Type, Format(Field.Type));
-                Record.Validate("Field Caption", Field."Field Caption");
-                Record.Validate("Use Field", false);
-                Record.Validate("Number Order", 0);
-                Record.Insert(false);
-            until Field.Next() = 0;
+        if TableID <> 0 then
+            if Field.FindSet() then
+                repeat
+                    Record.Validate(TableNo, Field.TableNo);
+                    Record.Validate("No.", Field."No.");
+                    Record.Validate(TableName, Field.TableName);
+                    Record.Validate(FieldName, Field.FieldName);
+                    Record.Validate("Type Name", Field."Type Name");
+                    Record.Validate(Type, Format(Field.Type));
+                    Record.Validate("Field Caption", Field."Field Caption");
+                    Record.Validate("Use Field", false);
+                    Record.Validate("Number Order", 0);
+                    Record.Insert(false);
+                until Field.Next() = 0;
     end;
 
     local procedure AnnouceOrderOfFields()
@@ -246,6 +254,41 @@ page 60005 "Field Selector"
             exit(true)
     end;
 
+    trigger OnAfterGetRecord()
+    begin
+        IsBold := FieldNameAndFieldCaptionColouring();
+    end;
+
+    local procedure FieldNameAndFieldCaptionColouring(): Text
+    var
+        AboveFieldID50000: Boolean;
+        State: Text;
+        Fields: Record Field;
+    begin
+        if Rec."No." >= 50000 then
+            AboveFieldID50000 := true
+        else
+            AboveFieldID50000 := false;
+
+        Fields.Reset();
+        Fields.SetRange(TableNo, Rec.TableNo);
+        Fields.SetRange("No.", Rec."No.");
+        if Fields.FindFirst() then
+            case Fields.ObsoleteState of
+                Fields.ObsoleteState::No:
+                    State := '';
+                Fields.ObsoleteState::Pending:
+                    State := 'StrongAccent';
+                Fields.ObsoleteState::Removed:
+                    State := 'Unfavorable';
+            end;
+
+        if AboveFieldID50000 then
+            exit('Strong')
+        else
+            exit(State);
+    end;
+
     var
         AllObjWithCaption: Record AllObjWithCaption;
         Field: Record Field;
@@ -264,4 +307,5 @@ page 60005 "Field Selector"
         NoSearchUsedLbl: Label 'No Search Used';
         NonStandardTableLbl: Label 'Non Standard Table Found';
         CanUseAction: Boolean;
+        IsBold: Text;
 }
