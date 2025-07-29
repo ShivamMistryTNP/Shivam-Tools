@@ -6,11 +6,12 @@ pageextension 60000 "Sales Quote Subform Ext" extends "Sales Quote Subform"
         {
             field("Line No."; Rec."Line No.")
             {
+                ApplicationArea = All;
                 Editable = false;
             }
             field("Report Line No."; Rec."Sequence No. PCXP")
             {
-
+                ApplicationArea = All;
             }
         }
     }

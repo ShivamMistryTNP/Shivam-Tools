@@ -53,14 +53,17 @@ page 60003 "Exporting Options"
                 Caption = 'CSV Buffer';
                 field(CSVBufferLineNo; Rec."Line No.")
                 {
+                    ApplicationArea = All;
 
                 }
                 field(CSVBufferFieldNo; Rec."Field No.")
                 {
+                    ApplicationArea = All;
 
                 }
                 field(CSVBufferValue; Rec.Value)
                 {
+                    ApplicationArea = All;
 
                 }
 

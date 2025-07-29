@@ -23,6 +23,8 @@ page 60008 "Fields Table Finder"
                     trigger OnValidate()
                     begin
                         Size1 := GetSize(FieldFinderInput1, ListOfTables1);
+                        if (Size1 = 0) AND (FieldFinderInput1 <> '') then
+                            Error('Invalid Search, field name %1 does not exist', FieldFinderInput1);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -37,6 +39,8 @@ page 60008 "Fields Table Finder"
                     trigger OnValidate()
                     begin
                         Size2 := GetSize(FieldFinderInput2, ListOfTables2);
+                        if (Size2 = 0) AND (FieldFinderInput2 <> '') then
+                            Error('Invalid Search, field name %1 does not exist', FieldFinderInput2);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -51,6 +55,8 @@ page 60008 "Fields Table Finder"
                     trigger OnValidate()
                     begin
                         Size3 := GetSize(FieldFinderInput3, ListOfTables3);
+                        if (Size3 = 0) AND (FieldFinderInput3 <> '') then
+                            Error('Invalid Search, field name %1 does not exist', FieldFinderInput3);
                         CheckIfActionIsEnabled();
                         CurrPage.Update(false);
                     end;
@@ -59,6 +65,21 @@ page 60008 "Fields Table Finder"
                 {
                     Caption = 'Caption or Field Name';
                     ToolTip = 'Search Caption or Field Name';
+                    Editable = true;
+                    ApplicationArea = All;
+                    trigger OnValidate()
+                    begin
+                        Size1 := GetSize(FieldFinderInput1, ListOfTables1);
+                        Size2 := GetSize(FieldFinderInput2, ListOfTables2);
+                        Size3 := GetSize(FieldFinderInput3, ListOfTables3);
+                        CheckIfActionIsEnabled();
+                        CurrPage.Update(false);
+                    end;
+                }
+                field(SpecifiedSearch; FieldsContain)
+                {
+                    Caption = 'Fields Contain';
+                    ToolTip = 'Enable searching where fields contain before or after';
                     Editable = true;
                     ApplicationArea = All;
                     trigger OnValidate()
@@ -174,18 +195,42 @@ page 60008 "Fields Table Finder"
         myInt: Integer;
         FieldTable: Record Field;
     begin
+        ApplyFieldFilter(FieldTable, FieldFinderInput);
+
+        if FieldTable.FindSet() then
+            repeat
+                ListOfTables.Add(FieldTable.TableNo);
+            until FieldTable.Next() = 0;
+    end;
+
+    local procedure ApplyFieldFilter(var FieldTable: Record Field; FieldFinderInput: Text)
+    begin
         FieldTable.Reset();
+
         if FieldFinderInput <> '' then begin
-            TextFinderFiltered := '*' + FieldFinderInput + '*';
-            if CaptionOrFieldName = true then
+            if FieldsContain then
+                TextFinderFiltered := '*' + FieldFinderInput + '*' else
+                TextFinderFiltered := FieldFinderInput;
+
+            if CaptionOrFieldName then
                 FieldTable.SetFilter(FieldName, TextFinderFiltered)
             else
                 FieldTable.SetFilter("Field Caption", TextFinderFiltered);
-            if FieldTable.FindSet() then
-                repeat
-                    ListOfTables.Add(FieldTable.TableNo);
-                until FieldTable.Next() = 0;
         end;
+    end;
+
+    local procedure IsSearchEmpty(FieldFinderInput: Text): Boolean
+    var
+        myInt: Integer;
+        FieldTable: Record Field;
+    begin
+        ApplyFieldFilter(FieldTable, FieldFinderInput);
+
+        if FieldFinderInput <> '' then
+            if FieldTable.IsEmpty() then
+                exit(true)
+            else
+                exit(false);
     end;
 
     local procedure GetSize(FieldFinderInput: Text; ListOfTables: List of [Integer]): Integer
@@ -196,7 +241,9 @@ page 60008 "Fields Table Finder"
     begin
         FieldTable.Reset();
         if FieldFinderInput <> '' then begin
-            TextFinderFiltered := '*' + FieldFinderInput + '*';
+            if FieldsContain then
+                TextFinderFiltered := '*' + FieldFinderInput + '*' else
+                TextFinderFiltered := FieldFinderInput;
             if CaptionOrFieldName = true then
                 FieldTable.SetFilter(FieldName, TextFinderFiltered)
             else
@@ -310,6 +357,14 @@ page 60008 "Fields Table Finder"
                     end else
                         FindLowestList := 0;
         if FindLowestList > 0 then begin
+            if IsSearchEmpty(FieldFinderInput1) then
+                Message('Search 1 is invalid');
+
+            if IsSearchEmpty(FieldFinderInput2) then
+                Message('Search 2 is invalid');
+
+            if IsSearchEmpty(FieldFinderInput3) then
+                Message('Search 3 is invalid');
             case FindLowestList of
                 1:
                     begin
@@ -386,6 +441,7 @@ page 60008 "Fields Table Finder"
             CanUseAction := false;
     end;
 
+
     var
         FieldRecord: Record Field;
         TextFinderFiltered: Text;
@@ -396,7 +452,7 @@ page 60008 "Fields Table Finder"
         ListOfTablesAlreadyDone: List of [Integer];
         AddCurrentTable: Integer;
         TableFoundCount: Integer;
-        CanUseAction, CaptionOrFieldName : Boolean;
+        CanUseAction, CaptionOrFieldName, FieldsContain : Boolean;
 
         FindLowestList: Integer;
 }

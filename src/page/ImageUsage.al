@@ -12,6 +12,7 @@ page 60004 "Image Usage"
                 Caption = 'General';
                 field(ImageSelectOptions; ImageSelectOptions)
                 {
+                    ApplicationArea = All;
                     Caption = 'Image Select Option';
                 }
             }
