@@ -2,7 +2,7 @@ tableextension 60000 "Sales Line Ext" extends "Sales Line"
 {
     fields
     {
-        field(1871; "Sequence No. PCXP"; Integer)
+        field(50000; "Sequence No. PCXP"; Integer)
         {
             Caption = 'Report Line No';
             DataClassification = CustomerContent;
@@ -13,6 +13,11 @@ tableextension 60000 "Sales Line Ext" extends "Sales Line"
             Caption = 'Report Line No';
             DataClassification = CustomerContent;
             Editable = False;
+        }
+        field(50002; "Unit Price 2"; Decimal)
+        {
+            Caption = 'Unit Price 2';
+            DataClassification = CustomerContent;
         }
         modify("No.")
         {
@@ -50,7 +55,7 @@ tableextension 60000 "Sales Line Ext" extends "Sales Line"
         SalesLine.SetRange("Line No.", REc."Line No.");
         if not SalesLine.FindFirst() then
             exit;
-        // FindNextLine(Rec."Line No.", Direction);
+
         SalesLine.SetRange("Line No.");
         if SalesLine.Find(Direction) then begin
             SwapSeq := SalesLine."Sequence No. PCXP";
@@ -63,8 +68,6 @@ tableextension 60000 "Sales Line Ext" extends "Sales Line"
             end;
             SalesLine.Modify(true);
             Rec.Modify(true);
-
-            // ReOrderLines(Rec)
         end;
     end;
 
